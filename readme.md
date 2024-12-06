@@ -29,6 +29,7 @@ delightful, secure user experiences.
 - **[Drizzle ORM][]** as the headless TypeScript ORM.
 - **[Stripe][]** for subscription plans, customer portal, and more.
 - **[Bun][]** for fast local development.
+- **[Biome][]** for fast linting and formatting.
 - **[shadcn][]** React components.
 - **[Tailwind CSS][]** utility CSS Framework.
 - **[React Email][]**, customizable emails with React.
@@ -178,6 +179,18 @@ This template is not designed to be the quickest to set up to play with.
 - Checkout the repository.
 - `bun install` to install the dependencies.
 
+### AWS
+
+SST requires an [AWS][] account.
+
+The easiest way is to use your personal root user account to try things out. If
+you are going to run this stack under an AWS Organization, checkout the SST docs
+on how to [setup your AWS account](https://sst.dev/docs/aws-accounts).
+
+When you’re done, read the
+[SST credentials docs](https://sst.dev/docs/iam-credentials) and put your
+credentials in `~/.aws/credentials`.
+
 ### Domain
 
 A domain registered with
@@ -208,18 +221,6 @@ Just kicking the tires? You can skip this setting up a domain for now.
 - },
 ```
 
-### AWS
-
-SST requires an [AWS][] account.
-
-The easiest way is to use your personal root user account to try things out. If
-you are going to run this stack under an AWS Organization, checkout the SST docs
-on how to [setup your AWS account](https://sst.dev/docs/aws-accounts).
-
-When you’re done, read the
-[SST credentials docs](https://sst.dev/docs/iam-credentials) and put your
-credentials in `~/.aws/credentials`.
-
 ### Neon
 
 1. Get an account on [Neon](https://neon.tech) and create a Postgres database.
@@ -236,6 +237,12 @@ Run the following commands in this order:
 bun run db:push
 # Seed the database
 bun run db:seed
+```
+
+Whenever you make changes to the database schema you should run:
+
+```sh
+bun run db:migrate
 ```
 
 ### Stripe
@@ -368,3 +375,4 @@ Usage is as simple as it can be, as everything is already set up for you.
 [Zod]: https://zod.dev
 [AWS]: https://aws.amazon.com
 [Bun]: https://bun.sh
+[Biome]: https://biomejs.dev
