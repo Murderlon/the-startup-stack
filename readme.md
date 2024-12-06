@@ -1,3 +1,5 @@
+![Screenshot of the app and the SST multiplex in the terminal](./.github/cover.png)
+
 # The Startup Stack
 
 Get independence from expensive SaaS without loosing its developer experience,
