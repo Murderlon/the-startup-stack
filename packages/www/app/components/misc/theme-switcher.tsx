@@ -1,5 +1,5 @@
 import type { Theme, ThemeExtended } from '#app/utils/hooks/use-theme'
-import { useSubmit } from 'react-router';
+import { useSubmit } from 'react-router'
 import { LucideSun, LucideMoon, LucideMonitor } from 'lucide-react'
 import { useOptimisticThemeMode } from '#app/utils/hooks/use-theme'
 import { cn } from '#app/utils/misc'

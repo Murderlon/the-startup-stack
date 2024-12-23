@@ -1,5 +1,5 @@
-import type { MetaFunction, LoaderFunctionArgs } from 'react-router';
-import { Link, useLoaderData } from 'react-router';
+import type { MetaFunction, LoaderFunctionArgs } from 'react-router'
+import { Link, useLoaderData } from 'react-router'
 import Markdown from 'react-markdown'
 import rehypeSlug from 'rehype-slug'
 import { authenticator } from '#app/modules/auth/auth.server'

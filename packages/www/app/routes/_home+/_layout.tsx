@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router';
+import { Outlet } from 'react-router'
 
 export const ROUTE_PATH = '/' as const
 

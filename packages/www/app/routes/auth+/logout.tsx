@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs, ActionFunctionArgs } from 'react-router';
+import type { LoaderFunctionArgs, ActionFunctionArgs } from 'react-router'
 import { authenticator } from '#app/modules/auth/auth.server'
 
 export const ROUTE_PATH = '/auth/logout' as const

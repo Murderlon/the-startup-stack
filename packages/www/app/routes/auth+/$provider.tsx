@@ -1,5 +1,5 @@
-import type { ActionFunctionArgs } from 'react-router';
-import { redirect } from 'react-router';
+import type { ActionFunctionArgs } from 'react-router'
+import { redirect } from 'react-router'
 import { authenticator } from '#app/modules/auth/auth.server'
 import { ROUTE_PATH as LOGIN_PATH } from '#app/routes/auth+/login'
 

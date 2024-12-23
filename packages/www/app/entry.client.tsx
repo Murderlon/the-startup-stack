@@ -1,4 +1,4 @@
-import { HydratedRouter } from 'react-router/dom';
+import { HydratedRouter } from 'react-router/dom'
 import i18next from 'i18next'
 import I18nextBrowserLanguageDetector from 'i18next-browser-languagedetector'
 import { startTransition } from 'react'

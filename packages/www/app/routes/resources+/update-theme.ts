@@ -1,5 +1,5 @@
-import type { ActionFunctionArgs } from 'react-router';
-import { redirect } from 'react-router';
+import type { ActionFunctionArgs } from 'react-router'
+import { redirect } from 'react-router'
 import { safeRedirect } from 'remix-utils/safe-redirect'
 import { ThemeSchema, setTheme } from '#app/utils/hooks/use-theme'
 

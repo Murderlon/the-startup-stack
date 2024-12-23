@@ -1,8 +1,8 @@
-import type { MetaFunction, LoaderFunctionArgs, ActionFunctionArgs } from 'react-router';
+import type { MetaFunction, LoaderFunctionArgs, ActionFunctionArgs } from 'react-router'
 import type { Interval, Plan as PlanEnum } from '@company/core/src/constants'
 import { useState } from 'react'
-import { Form, useLoaderData } from 'react-router';
-import { redirect } from 'react-router';
+import { Form, useLoaderData } from 'react-router'
+import { redirect } from 'react-router'
 import { requireSessionUser } from '#app/modules/auth/auth.server'
 import { PLANS, PRICING_PLANS, INTERVALS, CURRENCIES } from '@company/core/src/constants'
 import { getLocaleCurrency } from '#app/utils/misc.server'

@@ -1,6 +1,6 @@
 import { db, schema } from '@company/core/src/drizzle/index'
 import { Email } from '@company/core/src/email/index'
-import { redirect } from 'react-router';
+import { redirect } from 'react-router'
 import { eq } from 'drizzle-orm'
 import { Authenticator } from 'remix-auth'
 import { GitHubStrategy } from 'remix-auth-github'

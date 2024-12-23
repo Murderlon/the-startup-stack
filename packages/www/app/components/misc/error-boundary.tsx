@@ -1,5 +1,5 @@
-import type { ErrorResponse } from 'react-router';
-import { isRouteErrorResponse, useParams, useRouteError } from 'react-router';
+import type { ErrorResponse } from 'react-router'
+import { isRouteErrorResponse, useParams, useRouteError } from 'react-router'
 
 type StatusHandler = (info: {
   error: ErrorResponse

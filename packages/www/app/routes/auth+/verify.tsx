@@ -1,7 +1,7 @@
-import type { MetaFunction, LoaderFunctionArgs, ActionFunctionArgs } from 'react-router';
+import type { MetaFunction, LoaderFunctionArgs, ActionFunctionArgs } from 'react-router'
 import { useRef, useEffect } from 'react'
-import { Form, useLoaderData } from 'react-router';
-import { data, redirect } from 'react-router';
+import { Form, useLoaderData } from 'react-router'
+import { data, redirect } from 'react-router'
 import { useHydrated } from 'remix-utils/use-hydrated'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'

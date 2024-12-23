@@ -1,6 +1,6 @@
-import type { LoaderFunctionArgs } from 'react-router';
-import { Link, Outlet } from 'react-router';
-import { redirect } from 'react-router';
+import type { LoaderFunctionArgs } from 'react-router'
+import { Link, Outlet } from 'react-router'
+import { redirect } from 'react-router'
 import { authenticator } from '#app/modules/auth/auth.server'
 import { getDomainPathname } from '#app/utils/misc.server'
 import { ROUTE_PATH as HOME_PATH } from '#app/routes/_home+/_layout'

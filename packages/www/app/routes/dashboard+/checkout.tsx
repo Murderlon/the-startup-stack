@@ -1,7 +1,7 @@
-import type { MetaFunction, LoaderFunctionArgs } from 'react-router';
+import type { MetaFunction, LoaderFunctionArgs } from 'react-router'
 import { useState } from 'react'
-import { Link, useLoaderData, useRevalidator } from 'react-router';
-import { redirect } from 'react-router';
+import { Link, useLoaderData, useRevalidator } from 'react-router'
+import { redirect } from 'react-router'
 import {
   LucideLoader2,
   LucideBadgeCheck,

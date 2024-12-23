@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate, useSubmit } from 'react-router';
+import { Link, useLocation, useNavigate, useSubmit } from 'react-router'
 import {
   LucideCheck,
   LucideChevronDown,
