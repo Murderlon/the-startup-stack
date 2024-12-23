@@ -1,7 +1,6 @@
-import type { SerializeFrom } from '@remix-run/node'
 import type { ClassValue } from 'clsx'
 import type { loader as rootLoader } from '#app/root'
-import { useFormAction, useNavigation, useRouteLoaderData } from '@remix-run/react'
+import { useFormAction, useNavigation, useRouteLoaderData } from 'react-router'
 import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
@@ -18,7 +17,7 @@ export function cn(...inputs: ClassValue[]) {
  */
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-function isUser(user: any): user is SerializeFrom<typeof rootLoader>['user'] {
+function isUser(user: any): boolean {
   return user && typeof user === 'object' && typeof user.id === 'string'
 }
 

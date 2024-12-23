@@ -1,7 +1,7 @@
-import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
+import type { MetaFunction, LoaderFunctionArgs } from 'react-router';
 import { useState } from 'react'
-import { Link, useLoaderData, useRevalidator } from '@remix-run/react'
-import { redirect } from '@remix-run/node'
+import { Link, useLoaderData, useRevalidator } from 'react-router';
+import { redirect } from 'react-router';
 import {
   LucideLoader2,
   LucideBadgeCheck,

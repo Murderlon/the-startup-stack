@@ -2,7 +2,7 @@
  * Permissions and Roles.
  * Implementation based on github.com/epicweb-dev/epic-stack
  */
-import { data } from '@remix-run/node'
+import { data } from 'react-router';
 import { requireUser } from '#app/modules/auth/auth.server'
 import { userHasRole } from '#app/utils/misc'
 import { ROUTE_PATH as LOGIN_PATH } from '#app/routes/auth+/login'

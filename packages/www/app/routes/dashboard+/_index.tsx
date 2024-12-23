@@ -1,4 +1,4 @@
-import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
+import type { MetaFunction, LoaderFunctionArgs } from 'react-router';
 import { LucidePlus, LucideExternalLink } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { requireUser } from '#app/modules/auth/auth.server'

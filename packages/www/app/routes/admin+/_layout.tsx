@@ -1,5 +1,5 @@
-import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import type { MetaFunction, LoaderFunctionArgs } from 'react-router';
+import { useLoaderData } from 'react-router';
 import { LucideShoppingBasket, LucideExternalLink } from 'lucide-react'
 import { requireUserWithRole } from '#app/utils/permissions.server'
 import { cn } from '#app/utils/misc.js'

@@ -1,5 +1,5 @@
-import type { RouteConfig } from '@remix-run/route-config'
-import { remixRoutesOptionAdapter } from '@remix-run/routes-option-adapter'
+import type { RouteConfig } from '@react-router/dev/routes';
+import { remixRoutesOptionAdapter } from '@react-router/remix-routes-option-adapter';
 import { flatRoutes } from 'remix-flat-routes'
 
 export default remixRoutesOptionAdapter((defineRoutes) =>

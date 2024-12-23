@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs } from '@remix-run/router'
+import type { ActionFunctionArgs } from 'react-router';
 import { requireUser } from '#app/modules/auth/auth.server'
 import { db, schema } from '@company/core/src/drizzle/index'
 import { eq } from 'drizzle-orm'

@@ -1,5 +1,5 @@
-import type { MetaFunction } from '@remix-run/node'
-import { Link } from '@remix-run/react'
+import type { MetaFunction } from 'react-router';
+import { Link } from 'react-router';
 import { LucideHelpCircle, LucideExternalLink } from 'lucide-react'
 import { siteConfig } from '#app/utils/constants/brand'
 import { GenericErrorBoundary } from '#app/components/misc/error-boundary'
