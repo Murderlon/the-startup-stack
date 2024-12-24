@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-sesv2": "^3.687.0",
-    "@neondatabase/serverless": "^0.9.5",
+    "@neondatabase/serverless": "^0.10.4",
     "stripe": "^15.5.0",
     "sst": "^3.3.27",
     "drizzle-orm": "^0.36.2",
