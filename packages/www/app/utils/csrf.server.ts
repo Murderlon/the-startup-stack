@@ -2,7 +2,7 @@
  * Learn more about CSRF protection:
  * @see https://github.com/sergiodxa/remix-utils?tab=readme-ov-file#csrf
  */
-import { createCookie } from '@remix-run/node'
+import { createCookie } from 'react-router'
 import { CSRF, CSRFError } from 'remix-utils/csrf/server'
 import { Resource } from 'sst'
 

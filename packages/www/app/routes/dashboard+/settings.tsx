@@ -1,5 +1,5 @@
-import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
-import { Link, Outlet, useLocation } from '@remix-run/react'
+import type { MetaFunction, LoaderFunctionArgs } from 'react-router'
+import { Link, Outlet, useLocation } from 'react-router'
 import { z } from 'zod'
 import { requireUser } from '#app/modules/auth/auth.server'
 import { cn } from '#app/utils/misc'
