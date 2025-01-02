@@ -25,6 +25,7 @@ Check it live 👉 <https://stack.merlijn.site>
   - [Stripe](#stripe)
   - [Secrets](#secrets)
 - [Use](#use)
+  - [Commands](#commands)
   - [Authentication](#authentication)
   - [Subscriptions](#subscriptions)
   - [Internationalization](#internationalization)
@@ -35,7 +36,7 @@ Check it live 👉 <https://stack.merlijn.site>
 
 ## Features
 
-- **[Remix][]** as the full-stack **[React][]** framework.
+- **[React Router][]** (formerly known as [Remix][]) as the full-stack **[React][]** framework.
 - **[SST][]** for infrastructure as code on AWS and Cloudflare.
 - **[Hono][]** API on [AWS Lambda][].
 - **[Postgres][]** database through **[Neon][]**.
@@ -400,6 +401,7 @@ Usage is as simple as it can be, as everything is already set up for you.
 <!-- Definitions -->
 
 [Remix]: https://remix.run
+[React Router]: https://reactrouter.com
 [React]: https://react.dev
 [SST]: https://sst.dev
 [Postgres]: https://postgresql.org

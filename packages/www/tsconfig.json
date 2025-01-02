@@ -9,7 +9,8 @@
   ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "types": ["@remix-run/node", "vite/client", "vitest/globals"],
+    "types": ["@react-router/node", "vite/client", "vitest/globals"],
+    "rootDirs": [".", "./.react-router/types"],
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "Bundler",

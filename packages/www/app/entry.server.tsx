@@ -1,9 +1,9 @@
-import type { AppLoadContext, EntryContext } from '@remix-run/node'
+import type { AppLoadContext, EntryContext } from 'react-router'
 import { isbot } from 'isbot'
 import { PassThrough } from 'node:stream'
 import crypto from 'node:crypto'
-import { RemixServer } from '@remix-run/react'
-import { createReadableStreamFromReadable } from '@remix-run/node'
+import { ServerRouter } from 'react-router'
+import { createReadableStreamFromReadable } from '@react-router/node'
 import { renderToPipeableStream } from 'react-dom/server'
 import { createInstance } from 'i18next'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
@@ -17,7 +17,7 @@ export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext,
+  reactRouterContext: EntryContext,
   _: AppLoadContext,
 ) {
   const callbackName = isbot(request.headers.get('user-agent'))
@@ -40,7 +40,7 @@ export default async function handleRequest(
    */
   const instance = createInstance()
   const lng = await i18nServer.getLocale(request)
-  const ns = i18nServer.getRouteNamespaces(remixContext)
+  const ns = i18nServer.getRouteNamespaces(reactRouterContext)
 
   await instance.use(initReactI18next).init({
     ...i18n,
@@ -54,7 +54,7 @@ export default async function handleRequest(
     const { pipe, abort } = renderToPipeableStream(
       <NonceProvider value={nonce}>
         <I18nextProvider i18n={instance}>
-          <RemixServer nonce={nonce} context={remixContext} url={request.url} />
+          <ServerRouter nonce={nonce} context={reactRouterContext} url={request.url} />
         </I18nextProvider>
       </NonceProvider>,
       {

@@ -1,4 +1,4 @@
-import { useNavigate } from '@remix-run/react'
+import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { LucideLanguages } from 'lucide-react'
 import {

@@ -1,4 +1,4 @@
-import { createCookie } from '@remix-run/node'
+import { createCookie } from 'react-router'
 import { RemixI18Next } from 'remix-i18next/server'
 
 import * as i18n from '#app/modules/i18n/i18n'
