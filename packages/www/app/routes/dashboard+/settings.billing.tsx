@@ -7,17 +7,16 @@ import type { Interval, Plan as PlanEnum } from '@company/core/src/constants'
 import { useState } from 'react'
 import { Form, useLoaderData } from '@remix-run/react'
 import { redirect } from '@remix-run/node'
-import { requireSessionUser } from '#app/modules/auth/auth.server'
 import { PLANS, PRICING_PLANS, INTERVALS, CURRENCIES } from '@company/core/src/constants'
 import { getLocaleCurrency } from '#app/utils/misc.server'
 import { INTENTS } from '#app/utils/constants/misc'
-import { ROUTE_PATH as LOGIN_PATH } from '#app/routes/auth+/login'
 import { Switch } from '#app/components/ui/switch'
 import { Button } from '#app/components/ui/button'
 import { Subscription } from '@company/core/src/subscription/index'
 import { Stripe } from '@company/core/src/stripe'
 import { ERRORS } from '#app/utils/constants/errors'
 import { Plan } from '@company/core/src/plan/index'
+import { getLoginUrl, requireUser } from '#app/modules/auth/auth.server.ts'
 
 export const ROUTE_PATH = '/dashboard/settings/billing' as const
 
@@ -26,19 +25,19 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const sessionUser = await requireSessionUser(request, {
-    redirectTo: LOGIN_PATH,
+  const user = await requireUser(request, {
+    redirectTo: await getLoginUrl(),
   })
 
-  const subscription = await Subscription.fromUserID(sessionUser.id)
+  const subscription = await Subscription.fromUserID(user.id)
   const currency = getLocaleCurrency(request)
 
   return { subscription, currency }
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const sessionUser = await requireSessionUser(request, {
-    redirectTo: LOGIN_PATH,
+  const user = await requireUser(request, {
+    redirectTo: await getLoginUrl(),
   })
 
   const formData = await request.formData()
@@ -47,7 +46,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (intent === INTENTS.SUBSCRIPTION_CREATE_CHECKOUT) {
     const planId = String(formData.get('planId'))
     const planInterval = String(formData.get('planInterval'))
-    const subscription = await Subscription.fromUserID(sessionUser.id)
+    const subscription = await Subscription.fromUserID(user.id)
     if (subscription?.planId !== PLANS.FREE) return
 
     const currency = getLocaleCurrency(request)
@@ -57,15 +56,15 @@ export async function action({ request }: ActionFunctionArgs) {
       (price) => price.interval === planInterval && price.currency === currency,
     )
     if (!price) throw new Error(ERRORS.STRIPE_SOMETHING_WENT_WRONG)
-    if (!sessionUser.customerId) throw new Error(ERRORS.STRIPE_SOMETHING_WENT_WRONG)
+    if (!user.customerId) throw new Error(ERRORS.STRIPE_SOMETHING_WENT_WRONG)
 
-    const checkout = await Stripe.checkout(sessionUser.customerId, price.id)
+    const checkout = await Stripe.checkout(user.customerId, price.id)
     if (!checkout?.url) return { success: false }
     return redirect(checkout.url)
   }
   if (intent === INTENTS.SUBSCRIPTION_CREATE_CUSTOMER_PORTAL) {
-    if (!sessionUser.customerId) throw new Error(ERRORS.STRIPE_SOMETHING_WENT_WRONG)
-    const customerPortal = await Stripe.customerPortal(sessionUser.customerId)
+    if (!user.customerId) throw new Error(ERRORS.STRIPE_SOMETHING_WENT_WRONG)
+    const customerPortal = await Stripe.customerPortal(user.customerId)
     if (!customerPortal) return { success: false }
     return redirect(customerPortal.url)
   }

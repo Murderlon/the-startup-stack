@@ -2,27 +2,29 @@ import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
 import Markdown from 'react-markdown'
 import rehypeSlug from 'rehype-slug'
-import { authenticator } from '#app/modules/auth/auth.server'
 import { siteConfig } from '#app/utils/constants/brand'
-import { ROUTE_PATH as LOGIN_PATH } from '#app/routes/auth+/login'
 import { buttonVariants } from '#app/components/ui/button'
 import { Logo } from '#app/components/logo'
 import { useTheme } from '#app/utils/hooks/use-theme.ts'
+import { getLoginUrl, optionalUser } from '#app/modules/auth/auth.server.ts'
+import { ROUTE_PATH as DASHBOARD_PATH } from '../dashboard+/_layout'
 
 export const meta: MetaFunction = () => {
   return [{ title: `${siteConfig.siteTitle} - Starter Kit` }]
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const sessionUser = await authenticator.isAuthenticated(request)
+  const user = await optionalUser(request)
+  console.log('home loader', user)
   const readme = await fetch(
     'https://github.com/Murderlon/the-startup-stack/raw/refs/heads/main/readme.md',
   )
-  return { user: sessionUser, readme: await readme.text() }
+  const url = user ? DASHBOARD_PATH : await getLoginUrl()
+  return { user, readme: await readme.text(), url }
 }
 
 export default function Index() {
-  const { user, readme } = useLoaderData<typeof loader>()
+  const { user, readme, url } = useLoaderData<typeof loader>()
   const theme = useTheme()
 
   return (
@@ -52,7 +54,7 @@ export default function Index() {
             </a>
           </div>
           <div className="flex items-center gap-4">
-            <Link to={LOGIN_PATH} className={buttonVariants({ size: 'sm' })}>
+            <Link to={url} className={buttonVariants({ size: 'sm' })}>
               {user ? 'Dashboard' : 'Get Started'}
             </Link>
           </div>

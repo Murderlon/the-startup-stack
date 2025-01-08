@@ -12,7 +12,6 @@ import { data } from '@remix-run/node'
 import { useChangeLanguage } from 'remix-i18next/react'
 import { AuthenticityTokenProvider } from 'remix-utils/csrf/react'
 import { HoneypotProvider } from 'remix-utils/honeypot/react'
-import { authenticator } from '#app/modules/auth/auth.server'
 import { useNonce } from '#app/utils/hooks/use-nonce'
 import { getHints } from '#app/utils/hooks/use-hints'
 import { getTheme, useTheme } from '#app/utils/hooks/use-theme'
@@ -30,6 +29,7 @@ import { db, schema } from '@company/core/src/drizzle/index'
 import { eq } from 'drizzle-orm'
 
 import RootCSS from './root.css?url'
+import { optionalUser } from './modules/auth/auth.server'
 
 export const handle = { i18n: ['translation'] }
 
@@ -48,7 +48,7 @@ export const links: LinksFunction = () => {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const sessionUser = await authenticator.isAuthenticated(request)
+  const sessionUser = await optionalUser(request)
   const user =
     sessionUser?.id &&
     (await db.query.user.findFirst({

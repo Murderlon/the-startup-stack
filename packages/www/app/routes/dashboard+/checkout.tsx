@@ -8,13 +8,13 @@ import {
   LucideAlertTriangle,
   LucideExternalLink,
 } from 'lucide-react'
-import { requireSessionUser } from '#app/modules/auth/auth.server'
 import { PLANS } from '@company/core/src/constants'
 import { useInterval } from '#app/utils/hooks/use-interval'
 import { siteConfig } from '#app/utils/constants/brand'
 import { ROUTE_PATH as DASHBOARD_PATH } from '#app/routes/dashboard+/_layout'
 import { buttonVariants } from '#app/components/ui/button'
 import { Subscription } from '@company/core/src/subscription/index'
+import { requireUser } from '#app/modules/auth/auth.server.ts'
 
 export const ROUTE_PATH = '/dashboard/checkout'
 
@@ -23,8 +23,8 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const sessionUser = await requireSessionUser(request)
-  const subscription = await Subscription.fromUserID(sessionUser.id)
+  const user = await requireUser(request)
+  const subscription = await Subscription.fromUserID(user.id)
   if (!subscription) return redirect(DASHBOARD_PATH)
 
   return { isFreePlan: subscription.planId === PLANS.FREE }

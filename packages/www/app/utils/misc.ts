@@ -4,6 +4,7 @@ import type { loader as rootLoader } from '#app/root'
 import { useFormAction, useNavigation, useRouteLoaderData } from '@remix-run/react'
 import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import type { Role } from '@company/core/src/role/index'
 
 /**
  * Tailwind CSS classnames with support for conditional classes.
@@ -38,11 +39,9 @@ export function useUser() {
  * Permissions.
  * Implementation based on github.com/epicweb-dev/epic-stack
  */
-export type RoleName = 'user' | 'admin'
-
 export function userHasRole(
   user: Pick<ReturnType<typeof useUser>, 'roles'> | null,
-  role: RoleName,
+  role: (typeof Role.roles)[number],
 ) {
   if (!user) return false
   return user.roles.some((r) => r.role.name === role)

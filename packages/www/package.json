@@ -45,10 +45,10 @@
     "remix-i18next": "^6.1.0",
     "remix-utils": "^7.6.0",
     "sonner": "^1.4.41",
-    "sst": "^3.3.27",
+    "sst": "^3.4.56",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.23.6"
+    "zod": "3.23.8"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.15.0",

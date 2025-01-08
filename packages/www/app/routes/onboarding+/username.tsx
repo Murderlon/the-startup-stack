@@ -13,12 +13,10 @@ import { z } from 'zod'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { LucideLoader2 } from 'lucide-react'
-import { requireSessionUser } from '#app/modules/auth/auth.server'
 import { validateCSRF } from '#app/utils/csrf.server'
 import { checkHoneypot } from '#app/utils/honeypot.server'
 import { useIsPending } from '#app/utils/misc'
 import { ERRORS } from '#app/utils/constants/errors'
-import { ROUTE_PATH as LOGIN_PATH } from '#app/routes/auth+/login'
 import { Input } from '#app/components/ui/input'
 import { Button } from '#app/components/ui/button'
 import { ROUTE_PATH as DASHBOARD_PATH } from '#app/routes/dashboard+/_layout'
@@ -28,6 +26,7 @@ import { Subscription } from '@company/core/src/subscription/index'
 import { getLocaleCurrency } from '#app/utils/misc.server'
 import { INTERVALS, PLANS } from '@company/core/src/constants'
 import { Plan } from '@company/core/src/plan/index'
+import { requireUser } from '#app/modules/auth/auth.server.ts'
 
 export const ROUTE_PATH = '/onboarding/username' as const
 
@@ -46,15 +45,12 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await requireSessionUser(request, { redirectTo: LOGIN_PATH })
+  await requireUser(request)
   return {}
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const sessionUser = await requireSessionUser(request, {
-    redirectTo: LOGIN_PATH,
-  })
-
+  const sessionUser = await requireUser(request)
   const clonedRequest = request.clone()
   const formData = await clonedRequest.formData()
   await validateCSRF(formData, clonedRequest.headers)

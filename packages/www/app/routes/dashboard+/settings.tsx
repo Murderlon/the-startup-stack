@@ -1,7 +1,8 @@
 import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
+import { redirect } from '@remix-run/node'
 import { Link, Outlet, useLocation } from '@remix-run/react'
 import { z } from 'zod'
-import { requireUser } from '#app/modules/auth/auth.server'
+import { requireUser, openauth } from '#app/modules/auth/auth.server'
 import { cn } from '#app/utils/misc'
 import { ROUTE_PATH as BILLING_PATH } from '#app/routes/dashboard+/settings.billing'
 import { buttonVariants } from '#app/components/ui/button'
@@ -24,6 +25,7 @@ export const meta: MetaFunction = () => {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const user = await requireUser(request)
+
   return { user }
 }
 
