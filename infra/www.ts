@@ -2,7 +2,7 @@ import { domain } from './dns'
 import { email } from './email'
 import { secret } from './secret'
 
-export const www = new sst.aws.Remix('Remix', {
+export const www = new sst.aws.React('ReactRouter', {
   path: './packages/www',
   domain: {
     name: domain,

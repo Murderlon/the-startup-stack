@@ -9,7 +9,7 @@
   "scripts": {
     "build": "react-router build",
     "dev": "react-router dev",
-    "start": "sst shell remix vite:start",
+    "start": "sst shell react-router start",
     "test": "vitest",
     "typecheck": "react-router typegen && tsc"
   },

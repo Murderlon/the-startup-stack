@@ -40,8 +40,8 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "Remix": {
-      "type": "sst.aws.Remix"
+    "ReactRouter": {
+      "type": "sst.aws.React"
       "url": string
     }
     "SESSION_SECRET": {
