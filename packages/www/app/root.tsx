@@ -48,7 +48,7 @@ export const links: LinksFunction = () => {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const sessionUser = await authenticator.isAuthenticated(request)
+  const sessionUser = await authenticator.authenticate('openauth', request)
   const user =
     sessionUser?.id &&
     (await db.query.user.findFirst({

@@ -1,142 +1,80 @@
-import { db, schema } from '@company/core/src/drizzle/index'
-import { Email } from '@company/core/src/email/index'
-import { redirect } from 'react-router'
-import { eq } from 'drizzle-orm'
+import { User } from '@company/core/src/user/index'
+import { createClient } from '@openauthjs/openauth/client'
+import { createCookie, redirect } from 'react-router'
 import { Authenticator } from 'remix-auth'
-import { GitHubStrategy } from 'remix-auth-github'
-import { TOTPStrategy } from 'remix-auth-totp'
+import { OpenAuthStrategy } from 'remix-auth-openauth'
 import { Resource } from 'sst'
-import { authSessionStorage } from '#app/modules/auth/auth-session.server'
 import { ROUTE_PATH as LOGOUT_PATH } from '#app/routes/auth+/logout'
-import { ROUTE_PATH as MAGIC_LINK_PATH } from '#app/routes/auth+/magic-link'
-import { ERRORS } from '#app/utils/constants/errors'
+import { combineHeaders } from '#app/utils/misc.server.ts'
 
-async function getUserWithImageAndRole(email: string) {
-  return db.query.user.findFirst({
-    where: eq(schema.user.email, email),
-    with: {
-      image: { columns: { id: true } },
-      roles: {
-        columns: {},
-        with: {
-          role: {
-            columns: {
-              name: true,
-            },
-          },
-        },
-      },
-    },
-  })
+export const openauth = createClient({
+  clientID: 'web',
+  issuer: Resource.Auth.url,
+})
+
+export const refreshTokenCookie = createCookie('refresh_token', {
+  httpOnly: true,
+  sameSite: 'lax',
+  path: '/',
+  maxAge: 34560000,
+  secure: process.env.NODE_ENV === 'production',
+})
+
+export const accessTokenCookie = createCookie('access_token', {
+  httpOnly: true,
+  sameSite: 'lax',
+  path: '/',
+  maxAge: 34560000,
+  secure: process.env.NODE_ENV === 'production',
+})
+
+export async function setTokens(access: string, refresh: string) {
+  // biome-ignore lint/style/noNonNullAssertion: guaranteed fine
+  return combineHeaders(
+    { 'Set-Cookie': await accessTokenCookie.serialize(access) },
+    { 'Set-Cookie': await refreshTokenCookie.serialize(refresh) },
+  ).get('Set-Cookie')!
 }
 
-async function createUserWithRole(email: string) {
-  await db.transaction(async (tx) => {
-    const [newUser] = await tx.insert(schema.user).values({ email }).returning()
-    const roles = await tx
-      .select({ id: schema.role.id })
-      .from(schema.role)
-      .where(eq(schema.role.name, 'user'))
-
-    await tx
-      .insert(schema.roleToUser)
-      .values(roles.map((role) => ({ roleId: role.id, userId: newUser.id })))
-  })
-  return getUserWithImageAndRole(email)
+export async function removeTokens() {
+  // biome-ignore lint/style/noNonNullAssertion: guaranteed fine
+  return combineHeaders(
+    { 'Set-Cookie': await accessTokenCookie.serialize('', { maxAge: 1 }) },
+    { 'Set-Cookie': await refreshTokenCookie.serialize('', { maxAge: 1 }) },
+  ).get('Set-Cookie')!
 }
 
-export const authenticator = new Authenticator<
-  Awaited<ReturnType<typeof getUserWithImageAndRole>>
->(authSessionStorage)
+export const authenticator = new Authenticator<User.info>()
 
-/**
- * TOTP - Strategy.
- */
 authenticator.use(
-  new TOTPStrategy(
+  new OpenAuthStrategy(
     {
-      secret: Resource.ENCRYPTION_SECRET.value || 'NOT_A_STRONG_SECRET',
-      magicLinkPath: MAGIC_LINK_PATH,
-      sendTOTP: async ({ email, code, magicLink }) => {
-        if (process.env.NODE_ENV === 'development') {
-          // Development Only: Log the TOTP code.
-          console.log('=============================')
-          console.log('[ Dev-Only ] TOTP Code:', code)
-          console.log('=============================')
-
-          // Email is not sent for admin users.
-          if (email.startsWith('admin')) {
-            console.log('Not sending email for admin user.')
-            return
-          }
-        }
-        await Email.sendAuth({ email, code, magicLink })
-      },
+      clientId: 'web',
+      redirectUri: `${process.env.HOST_URL}/auth/callback`,
+      issuer: Resource.Auth.url,
     },
-    async ({ email }) => {
-      let user = await getUserWithImageAndRole(email)
-
-      if (!user) {
-        user = await createUserWithRole(email)
-        if (!user) throw new Error(ERRORS.AUTH_USER_NOT_CREATED)
+    async ({ client, tokens }) => {
+      const verified = await client.verify(User.subjects, tokens.access, {
+        refresh: tokens.refresh,
+      })
+      if (verified.err) {
+        throw verified.err
       }
-
-      return user
+      return verified.subject.properties
     },
   ),
+  'openauth',
 )
-
-/**
- * Github - Strategy.
- */
-authenticator.use(
-  new GitHubStrategy(
-    {
-      clientId: Resource.GITHUB_CLIENT_ID.value,
-      clientSecret: Resource.GITHUB_CLIENT_SECRET.value,
-      redirectURI: `${process.env.HOST_URL}/auth/github/callback`,
-    },
-    async ({ profile }) => {
-      const email = profile._json.email || profile.emails[0].value
-
-      let user = await getUserWithImageAndRole(email)
-
-      if (!user) {
-        user = await createUserWithRole(email)
-        if (!user) throw new Error(ERRORS.AUTH_USER_NOT_CREATED)
-      }
-
-      return user
-    },
-  ),
-)
-
-/**
- * Utilities.
- */
-export async function requireSessionUser(
-  request: Request,
-  { redirectTo }: { redirectTo?: string | null } = {},
-) {
-  const sessionUser = await authenticator.isAuthenticated(request)
-  if (!sessionUser) {
-    if (!redirectTo) throw redirect(LOGOUT_PATH)
-    throw redirect(redirectTo)
-  }
-  return sessionUser
-}
 
 export async function requireUser(
   request: Request,
   { redirectTo }: { redirectTo?: string | null } = {},
 ) {
-  const sessionUser = await authenticator.isAuthenticated(request)
-  const user = sessionUser?.email
-    ? await getUserWithImageAndRole(sessionUser?.email)
-    : null
-  if (!user) {
+  try {
+    return authenticator.authenticate('openauth', request)
+  } catch (err) {
+    console.error('requireUser', err)
     if (!redirectTo) throw redirect(LOGOUT_PATH)
     throw redirect(redirectTo)
   }
-  return user
 }

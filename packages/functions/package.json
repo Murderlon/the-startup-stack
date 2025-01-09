@@ -10,8 +10,9 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "sst": "^3.3.27",
-    "hono": "^4.6.3"
+    "@openauthjs/openauth": "^0.3.2",
+    "hono": "^4.6.3",
+    "sst": "^3.3.27"
   },
   "devDependencies": {
     "typescript": "^5.7.2"

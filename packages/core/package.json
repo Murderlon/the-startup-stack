@@ -15,10 +15,12 @@
   "dependencies": {
     "@aws-sdk/client-sesv2": "^3.687.0",
     "@neondatabase/serverless": "^0.9.5",
-    "stripe": "^15.5.0",
-    "sst": "^3.3.27",
+    "@openauthjs/openauth": "^0.3.2",
     "drizzle-orm": "^0.36.2",
+    "sst": "^3.3.27",
+    "stripe": "^15.5.0",
     "ulid": "^2.3.0",
+    "valibot": "^1.0.0-beta.11",
     "ws": "^8.18.0"
   },
   "devDependencies": {

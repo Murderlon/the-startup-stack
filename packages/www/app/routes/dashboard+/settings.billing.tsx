@@ -3,11 +3,10 @@ import type { Interval, Plan as PlanEnum } from '@company/core/src/constants'
 import { useState } from 'react'
 import { Form, useLoaderData } from 'react-router'
 import { redirect } from 'react-router'
-import { requireSessionUser } from '#app/modules/auth/auth.server'
+import { requireUser } from '#app/modules/auth/auth.server'
 import { PLANS, PRICING_PLANS, INTERVALS, CURRENCIES } from '@company/core/src/constants'
 import { getLocaleCurrency } from '#app/utils/misc.server'
 import { INTENTS } from '#app/utils/constants/misc'
-import { ROUTE_PATH as LOGIN_PATH } from '#app/routes/auth+/login'
 import { Switch } from '#app/components/ui/switch'
 import { Button } from '#app/components/ui/button'
 import { Subscription } from '@company/core/src/subscription/index'
@@ -22,9 +21,7 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const sessionUser = await requireSessionUser(request, {
-    redirectTo: LOGIN_PATH,
-  })
+  const sessionUser = await requireUser(request)
 
   const subscription = await Subscription.fromUserID(sessionUser.id)
   const currency = getLocaleCurrency(request)
@@ -33,9 +30,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const sessionUser = await requireSessionUser(request, {
-    redirectTo: LOGIN_PATH,
-  })
+  const sessionUser = await requireUser(request)
 
   const formData = await request.formData()
   const intent = formData.get(INTENTS.INTENT)

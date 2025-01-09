@@ -1,3 +1,4 @@
+import { auth } from './auth'
 import { domain } from './dns'
 import { email } from './email'
 import { secret } from './secret'
@@ -20,6 +21,7 @@ export const www = new sst.aws.React('ReactRouter', {
   ],
   link: [
     email,
+    auth,
     secret.SESSION_SECRET,
     secret.ENCRYPTION_SECRET,
     secret.DATABASE_URL,
