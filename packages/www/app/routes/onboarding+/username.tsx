@@ -71,6 +71,7 @@ export async function action({ request }: ActionFunctionArgs) {
     )
   }
   const user = await User.update(sessionUser.id, { username })
+  // TODO: do these as background job?
   const customer = await Stripe.createCustomer(user.email, user.username ?? undefined)
   const price = await Plan.price(PLANS.FREE, INTERVALS.YEAR, getLocaleCurrency(request))
 
@@ -78,7 +79,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const subscription = await Stripe.createSubscription(customer.id, price.id)
   await User.update(user.id, { customerId: customer.id })
-  await Subscription.insert(user.id, subscription)
+  await Subscription.insert(user.id, subscription, PLANS.FREE)
 
   return redirect(DASHBOARD_PATH)
 }

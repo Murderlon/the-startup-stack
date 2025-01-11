@@ -12,9 +12,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   session.set('user', sessionUser)
 
-  console.log('callback', sessionUser)
-
-  return redirect(`${process.env.HOST_URL}/dashboard`, {
+  return redirect('/dashboard', {
     headers: {
       'Set-Cookie': await commitSession(session),
     },

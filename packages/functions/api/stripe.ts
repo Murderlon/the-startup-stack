@@ -4,7 +4,6 @@ import { Stripe } from '@company/core/src/stripe'
 import { Subscription } from '@company/core/src/subscription/index'
 import { User } from '@company/core/src/user/index'
 import { Hono } from 'hono'
-import { Resource } from 'sst'
 import { z } from 'zod'
 
 export const route = new Hono().post('/', async (ctx) => {
@@ -12,13 +11,9 @@ export const route = new Hono().post('/', async (ctx) => {
 
   if (!sig) throw new Error(Stripe.errors.MISSING_SIGNATURE)
 
-  console.log({
-    sig,
-    secret: Resource.StripeWebhook.secret,
-    id: Resource.StripeWebhook.id,
-  })
-
   const event = await Stripe.createEvent(await ctx.req.text(), sig)
+
+  console.log(event.type)
 
   try {
     switch (event.type) {

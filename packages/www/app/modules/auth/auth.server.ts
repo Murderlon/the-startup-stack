@@ -1,5 +1,5 @@
 import { User } from '@company/core/src/user/index'
-import { createCookieSessionStorage } from 'react-router'
+import { createCookieSessionStorage, redirect } from 'react-router'
 import { Authenticator } from 'remix-auth'
 import { OpenAuthStrategy } from 'remix-auth-openauth'
 import { Resource } from 'sst'
@@ -57,5 +57,9 @@ export async function getUserSession(request: Request) {
 export async function requireUser(request: Request) {
   let sessionUser = await getUserSession(request)
   sessionUser ??= await authenticator.authenticate('openauth', request)
-  return sessionUser
+  const user = await User.fromEmailWithRole(sessionUser.email)
+  if (!user) {
+    throw redirect('/auth/logout')
+  }
+  return user
 }
