@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm'
-import { createSubjects } from '@openauthjs/openauth'
+import { createSubjects } from '@openauthjs/openauth/subject'
 import { db } from '../drizzle'
 import { user as schema, userImage as imageSchema } from './sql'
 import { role, roleToUser } from '../role/sql'
@@ -11,29 +11,25 @@ import type { InferOutput } from 'valibot'
 export namespace User {
   export const info = v.object({
     id: v.string(),
-    // TODO: make this email type (fails for valibot)
-    email: v.string(),
+    email: v.pipe(v.string(), v.email()),
     username: v.nullable(v.string()),
     customerId: v.nullable(v.string()),
-    createdAt: v.nullable(v.date()),
-    updatedAt: v.nullable(v.date()),
     roles: v.array(
       v.object({
-        role: v.object({
-          name: v.union(Role.roles.map((role) => v.literal(role))),
-        }),
+        name: v.union(Role.roles.map((role) => v.literal(role))),
+        id: v.string(),
       }),
     ),
   })
 
   export type info = InferOutput<typeof info>
 
-  // TODO: move this elsewhere?
   export const subjects = createSubjects({ user: info })
 
   export const insert = async (email: string) => {
     return db.transaction(async (tx) => {
-      const [newUser] = await tx.insert(schema).values({ email }).returning()
+      const result = await tx.insert(schema).values({ email }).returning()
+      const user = result[0]!
       const roles = await tx
         .select({ id: role.id, name: role.name })
         .from(role)
@@ -41,9 +37,9 @@ export namespace User {
 
       await tx
         .insert(roleToUser)
-        .values(roles.map((role) => ({ roleId: role.id, userId: newUser!.id })))
+        .values(roles.map((role) => ({ roleId: role.id, userId: user.id })))
 
-      return { ...newUser, roles }
+      return { ...user, roles }
     })
   }
 
@@ -71,7 +67,35 @@ export namespace User {
     })
   }
 
-  export const image = async (id: string) => {
-    return db.query.userImage.findFirst({ where: eq(imageSchema.userId, id) })
+  export const fromEmailWithRole = async (email: string) => {
+    const user = await db.query.user.findFirst({
+      where: eq(schema.email, email),
+      columns: { createdAt: false, updatedAt: false },
+      with: {
+        roles: {
+          columns: {},
+          with: {
+            role: {
+              columns: {
+                name: true,
+                id: true,
+              },
+            },
+          },
+        },
+      },
+    })
+    if (!user) return
+    return {
+      ...user,
+      roles: user.roles.map(({ role }) => ({ id: role.id, name: role.name })),
+    }
+  }
+
+  export const imageID = async (id: string) => {
+    return db.query.userImage.findFirst({
+      where: eq(imageSchema.userId, id),
+      columns: { id: true },
+    })
   }
 }

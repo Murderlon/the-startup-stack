@@ -2,7 +2,7 @@ import type { MetaFunction, LoaderFunctionArgs } from 'react-router'
 import { Link, useLoaderData } from 'react-router'
 import Markdown from 'react-markdown'
 import rehypeSlug from 'rehype-slug'
-import { authenticator } from '#app/modules/auth/auth.server'
+import { getUserSession } from '#app/modules/auth/auth.server'
 import { siteConfig } from '#app/utils/constants/brand'
 import { buttonVariants } from '#app/components/ui/button'
 import { Logo } from '#app/components/logo'
@@ -13,11 +13,11 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const sessionUser = await authenticator.authenticate('openauth', request)
+  const user = await getUserSession(request)
   const readme = await fetch(
     'https://github.com/Murderlon/the-startup-stack/raw/refs/heads/main/readme.md',
   )
-  return { user: sessionUser, readme: await readme.text() }
+  return { user, readme: await readme.text() }
 }
 
 export default function Index() {

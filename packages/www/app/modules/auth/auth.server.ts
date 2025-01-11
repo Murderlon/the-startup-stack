@@ -1,48 +1,33 @@
 import { User } from '@company/core/src/user/index'
-import { createClient } from '@openauthjs/openauth/client'
-import { createCookie, redirect } from 'react-router'
+import { createCookieSessionStorage } from 'react-router'
 import { Authenticator } from 'remix-auth'
 import { OpenAuthStrategy } from 'remix-auth-openauth'
 import { Resource } from 'sst'
-import { ROUTE_PATH as LOGOUT_PATH } from '#app/routes/auth+/logout'
-import { combineHeaders } from '#app/utils/misc.server.ts'
 
-export const openauth = createClient({
-  clientID: 'web',
-  issuer: Resource.Auth.url,
-})
-
-export const refreshTokenCookie = createCookie('refresh_token', {
-  httpOnly: true,
-  sameSite: 'lax',
-  path: '/',
-  maxAge: 34560000,
-  secure: process.env.NODE_ENV === 'production',
-})
-
-export const accessTokenCookie = createCookie('access_token', {
-  httpOnly: true,
-  sameSite: 'lax',
-  path: '/',
-  maxAge: 34560000,
-  secure: process.env.NODE_ENV === 'production',
-})
-
-export async function setTokens(access: string, refresh: string) {
-  // biome-ignore lint/style/noNonNullAssertion: guaranteed fine
-  return combineHeaders(
-    { 'Set-Cookie': await accessTokenCookie.serialize(access) },
-    { 'Set-Cookie': await refreshTokenCookie.serialize(refresh) },
-  ).get('Set-Cookie')!
+type SessionData = {
+  user: User.info
 }
 
-export async function removeTokens() {
-  // biome-ignore lint/style/noNonNullAssertion: guaranteed fine
-  return combineHeaders(
-    { 'Set-Cookie': await accessTokenCookie.serialize('', { maxAge: 1 }) },
-    { 'Set-Cookie': await refreshTokenCookie.serialize('', { maxAge: 1 }) },
-  ).get('Set-Cookie')!
+type SessionFlashData = {
+  error: string
 }
+
+export const AUTH_SESSION_KEY = '_auth'
+export const authSessionStorage = createCookieSessionStorage<
+  SessionData,
+  SessionFlashData
+>({
+  cookie: {
+    name: AUTH_SESSION_KEY,
+    path: '/',
+    sameSite: 'lax',
+    httpOnly: true,
+    secrets: [Resource.SESSION_SECRET.value || 'NOT_A_STRONG_SECRET'],
+    secure: process.env.NODE_ENV === 'production',
+  },
+})
+
+export const { getSession, commitSession, destroySession } = authSessionStorage
 
 export const authenticator = new Authenticator<User.info>()
 
@@ -53,28 +38,24 @@ authenticator.use(
       redirectUri: `${process.env.HOST_URL}/auth/callback`,
       issuer: Resource.Auth.url,
     },
-    async ({ client, tokens }) => {
-      const verified = await client.verify(User.subjects, tokens.access, {
+    async ({ tokens }) => {
+      const openauth = authenticator.get('openauth') as OpenAuthStrategy<User.info>
+      const verified = await openauth.verifyToken(User.subjects, tokens.access, {
         refresh: tokens.refresh,
       })
-      if (verified.err) {
-        throw verified.err
-      }
       return verified.subject.properties
     },
   ),
   'openauth',
 )
 
-export async function requireUser(
-  request: Request,
-  { redirectTo }: { redirectTo?: string | null } = {},
-) {
-  try {
-    return authenticator.authenticate('openauth', request)
-  } catch (err) {
-    console.error('requireUser', err)
-    if (!redirectTo) throw redirect(LOGOUT_PATH)
-    throw redirect(redirectTo)
-  }
+export async function getUserSession(request: Request) {
+  const session = await getSession(request.headers.get('Cookie'))
+  return session.get('user')
+}
+
+export async function requireUser(request: Request) {
+  let sessionUser = await getUserSession(request)
+  sessionUser ??= await authenticator.authenticate('openauth', request)
+  return sessionUser
 }

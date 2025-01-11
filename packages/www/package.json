@@ -25,7 +25,6 @@
     "@react-email/components": "^0.0.28",
     "@react-email/render": "^1.0.2",
     "@react-router/node": "^7.1.1",
-    "@openauthjs/openauth": "^0.3.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cookie": "^1.0.2",

@@ -7,6 +7,7 @@ import { siteConfig } from '#app/utils/constants/brand'
 import { buttonVariants } from '#app/components/ui/button'
 import { Navigation } from '#app/components/navigation'
 import { Subscription } from '@company/core/src/subscription/index'
+import { User } from '@company/core/src/user/index'
 
 export const ROUTE_PATH = '/admin' as const
 
@@ -16,16 +17,17 @@ export const meta: MetaFunction = () => {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const user = await requireUserWithRole(request, 'admin')
+  const image = await User.imageID(user.id)
   const subscription = await Subscription.fromUserID(user.id)
-  return { user, subscription }
+  return { user, image, subscription }
 }
 
 export default function Admin() {
-  const { user, subscription } = useLoaderData<typeof loader>()
+  const { user, image, subscription } = useLoaderData<typeof loader>()
 
   return (
     <div className="flex min-h-[100vh] w-full flex-col bg-secondary dark:bg-black">
-      <Navigation user={user} planId={subscription?.planId} />
+      <Navigation user={user} image={image} planId={subscription?.planId} />
 
       <div className="flex h-full w-full px-6 py-8">
         <div className="mx-auto flex h-full w-full max-w-screen-xl gap-12">

@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { LucideUpload } from 'lucide-react'
-import { removeTokens, requireUser } from '#app/modules/auth/auth.server'
+import { destroySession, getSession, requireUser } from '#app/modules/auth/auth.server'
 import { createToastHeaders } from '#app/utils/toast.server'
 import { useDoubleCheck } from '#app/utils/hooks/use-double-check'
 import { getUserImgSrc } from '#app/utils/misc'
@@ -37,7 +37,8 @@ export const UsernameSchema = z.object({
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const user = await requireUser(request)
-  return { user }
+  const image = await User.imageID(user.id)
+  return { user, image }
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -78,9 +79,10 @@ export async function action({ request }: ActionFunctionArgs) {
   // TODO: cancel Stripe subscription
   if (intent === INTENTS.USER_DELETE_ACCOUNT) {
     await db.delete(schema.user).where(eq(schema.user.id, user.id))
+    const session = await getSession(request.headers.get('Cookie'))
     return redirect(HOME_PATH, {
       headers: {
-        'Set-Cookie': await removeTokens(),
+        'Set-Cookie': await destroySession(session),
       },
     })
   }
@@ -89,7 +91,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function DashboardSettings() {
-  const { user } = useLoaderData<typeof loader>()
+  const { user, image } = useLoaderData<typeof loader>()
   const lastResult = useActionData<typeof action>()
 
   const [imageSrc, setImageSrc] = useState<string | null>(null)
@@ -136,15 +138,15 @@ export default function DashboardSettings() {
             htmlFor={avatarFields.imageFile.id}
             className="group relative flex cursor-pointer overflow-hidden rounded-full transition active:scale-95"
           >
-            {/* {imageSrc || user.image?.id ? ( */}
-            {/*   <img */}
-            {/*     src={imageSrc ?? getUserImgSrc(user.image?.id)} */}
-            {/*     className="h-20 w-20 rounded-full object-cover" */}
-            {/*     alt={user.username ?? user.email} */}
-            {/*   /> */}
-            {/* ) : ( */}
-            {/*   <div className="h-20 w-20 rounded-full bg-gradient-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" /> */}
-            {/* )} */}
+            {imageSrc || image?.id ? (
+              <img
+                src={imageSrc ?? getUserImgSrc(image?.id)}
+                className="h-20 w-20 rounded-full object-cover"
+                alt={user.username ?? user.email}
+              />
+            ) : (
+              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
+            )}
             <div className="absolute z-10 hidden h-full w-full items-center justify-center bg-primary/40 group-hover:flex">
               <LucideUpload className="h-6 w-6 text-secondary" />
             </div>
@@ -174,27 +176,27 @@ export default function DashboardSettings() {
           <p className="text-sm font-normal text-primary/60">
             Click on the avatar to upload a custom one from your files.
           </p>
-          {/* {user.image?.id && !avatarFields.imageFile.errors && ( */}
-          {/*   <Button */}
-          {/*     type="button" */}
-          {/*     size="sm" */}
-          {/*     variant="secondary" */}
-          {/*     onClick={() => { */}
-          {/*       resetImageFetcher.submit( */}
-          {/*         {}, */}
-          {/*         { */}
-          {/*           method: 'POST', */}
-          {/*           action: RESET_IMAGE_PATH, */}
-          {/*         }, */}
-          {/*       ) */}
-          {/*       if (imageFormRef.current) { */}
-          {/*         imageFormRef.current.reset() */}
-          {/*       } */}
-          {/*     }} */}
-          {/*   > */}
-          {/*     Reset */}
-          {/*   </Button> */}
-          {/* )} */}
+          {image?.id && !avatarFields.imageFile.errors && (
+            <Button
+              type="button"
+              size="sm"
+              variant="secondary"
+              onClick={() => {
+                resetImageFetcher.submit(
+                  {},
+                  {
+                    method: 'POST',
+                    action: RESET_IMAGE_PATH,
+                  },
+                )
+                if (imageFormRef.current) {
+                  imageFormRef.current.reset()
+                }
+              }}
+            >
+              Reset
+            </Button>
+          )}
           {avatarFields.imageFile.errors && (
             <p className="text-right text-sm text-destructive dark:text-destructive-foreground">
               {avatarFields.imageFile.errors.join(' ')}
