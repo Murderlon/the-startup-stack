@@ -318,6 +318,11 @@ bun run dev
 
 Go to production
 
+> [!CAUTION]
+> For now, you have to manually apply the changes from this [pull request](https://github.com/sst/sst/pull/5289)
+> to your `.sst` folder locally to deploy React Router v7.
+> This is not needed for `bun run dev`.
+
 ```sh
 bunx sst deploy --production
 ```
