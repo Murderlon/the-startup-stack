@@ -43,7 +43,7 @@
     "remix-auth": "^4.1.0",
     "remix-auth-openauth": "^0.0.4",
     "remix-i18next": "^7.0.1",
-    "remix-utils": "^7.6.0",
+    "remix-utils": "^8.0.0",
     "sonner": "^1.4.41",
     "sst": "^3.3.27",
     "tailwind-merge": "^2.3.0",
