@@ -38,6 +38,7 @@ Check it live 👉 <https://stack.merlijn.site>
 
 - **[React Router][]** (formerly known as [Remix][]) as the full-stack **[React][]** framework.
 - **[SST][]** for infrastructure as code on AWS and Cloudflare.
+- **[OpenAuth][]** for universal, self-hosted, standards-based authentication.
 - **[Hono][]** API on [AWS Lambda][].
 - **[Postgres][]** database through **[Neon][]**.
 - **[Drizzle ORM][]** as the headless TypeScript ORM.
@@ -49,7 +50,6 @@ Check it live 👉 <https://stack.merlijn.site>
 - **[React Email][]**, customizable emails with React.
 - **[Conform][]**, type-safe form validation based on web fundamentals.
 - **[Zod][]**, type-safe runtime schema validation.
-- **Authentication** through email code, magic link and social logins.
 - **Easy Theming**, switch between light and dark modes with ease.
 - **Client & Server Toasts**, display toasts on your app.
 - **CSRF and Honeypot Protection**, prevent malicious attacks.
@@ -423,3 +423,4 @@ Usage is as simple as it can be, as everything is already set up for you.
 [AWS]: https://aws.amazon.com
 [Bun]: https://bun.sh
 [Biome]: https://biomejs.dev
+[OpenAuth]: https://openauth.js.org
