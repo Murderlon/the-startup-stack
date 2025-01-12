@@ -1,12 +1,18 @@
-import type { LoaderFunctionArgs, ActionFunctionArgs } from 'react-router'
-import { authenticator } from '#app/modules/auth/auth.server'
+import { destroySession, getSession } from '#app/modules/auth/auth.server.ts'
+import {
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+  redirect,
+} from '@remix-run/router'
 
 export const ROUTE_PATH = '/auth/logout' as const
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  return authenticator.logout(request, { redirectTo: '/' })
+  const session = await getSession(request.headers.get('Cookie'))
+  return redirect('/', { headers: { 'Set-Cookie': await destroySession(session) } })
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  return authenticator.logout(request, { redirectTo: '/' })
+  const session = await getSession(request.headers.get('Cookie'))
+  return redirect('/', { headers: { 'Set-Cookie': await destroySession(session) } })
 }

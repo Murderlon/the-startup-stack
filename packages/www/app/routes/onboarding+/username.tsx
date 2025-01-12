@@ -9,12 +9,11 @@ import { z } from 'zod'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { LucideLoader2 } from 'lucide-react'
-import { requireSessionUser } from '#app/modules/auth/auth.server'
+import { requireUser } from '#app/modules/auth/auth.server'
 import { validateCSRF } from '#app/utils/csrf.server'
 import { checkHoneypot } from '#app/utils/honeypot.server'
 import { useIsPending } from '#app/utils/misc'
 import { ERRORS } from '#app/utils/constants/errors'
-import { ROUTE_PATH as LOGIN_PATH } from '#app/routes/auth+/login'
 import { Input } from '#app/components/ui/input'
 import { Button } from '#app/components/ui/button'
 import { ROUTE_PATH as DASHBOARD_PATH } from '#app/routes/dashboard+/_layout'
@@ -42,14 +41,12 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await requireSessionUser(request, { redirectTo: LOGIN_PATH })
+  await requireUser(request)
   return {}
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const sessionUser = await requireSessionUser(request, {
-    redirectTo: LOGIN_PATH,
-  })
+  const sessionUser = await requireUser(request)
 
   const clonedRequest = request.clone()
   const formData = await clonedRequest.formData()
@@ -74,6 +71,7 @@ export async function action({ request }: ActionFunctionArgs) {
     )
   }
   const user = await User.update(sessionUser.id, { username })
+  // TODO: do these as background job?
   const customer = await Stripe.createCustomer(user.email, user.username ?? undefined)
   const price = await Plan.price(PLANS.FREE, INTERVALS.YEAR, getLocaleCurrency(request))
 
@@ -81,7 +79,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const subscription = await Stripe.createSubscription(customer.id, price.id)
   await User.update(user.id, { customerId: customer.id })
-  await Subscription.insert(user.id, subscription)
+  await Subscription.insert(user.id, subscription, PLANS.FREE)
 
   return redirect(DASHBOARD_PATH)
 }

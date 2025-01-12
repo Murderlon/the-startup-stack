@@ -8,7 +8,7 @@ import {
   LucideAlertTriangle,
   LucideExternalLink,
 } from 'lucide-react'
-import { requireSessionUser } from '#app/modules/auth/auth.server'
+import { requireUser } from '#app/modules/auth/auth.server'
 import { PLANS } from '@company/core/src/constants'
 import { useInterval } from '#app/utils/hooks/use-interval'
 import { siteConfig } from '#app/utils/constants/brand'
@@ -23,7 +23,7 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const sessionUser = await requireSessionUser(request)
+  const sessionUser = await requireUser(request)
   const subscription = await Subscription.fromUserID(sessionUser.id)
   if (!subscription) return redirect(DASHBOARD_PATH)
 

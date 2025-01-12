@@ -12,7 +12,7 @@ import { data } from 'react-router'
 import { useChangeLanguage } from 'remix-i18next/react'
 import { AuthenticityTokenProvider } from 'remix-utils/csrf/react'
 import { HoneypotProvider } from 'remix-utils/honeypot/react'
-import { authenticator } from '#app/modules/auth/auth.server'
+import { authenticator, getUserSession } from '#app/modules/auth/auth.server'
 import { useNonce } from '#app/utils/hooks/use-nonce'
 import { getHints } from '#app/utils/hooks/use-hints'
 import { getTheme, useTheme } from '#app/utils/hooks/use-theme'
@@ -30,6 +30,7 @@ import { db, schema } from '@company/core/src/drizzle/index'
 import { eq } from 'drizzle-orm'
 
 import RootCSS from './root.css?url'
+import { User } from '@company/core/src/user/index'
 
 export const handle = { i18n: ['translation'] }
 
@@ -48,33 +49,14 @@ export const links: LinksFunction = () => {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const sessionUser = await authenticator.isAuthenticated(request)
-  const user =
-    sessionUser?.id &&
-    (await db.query.user.findFirst({
-      where: eq(schema.user.id, sessionUser.id),
-      with: {
-        image: { columns: { id: true } },
-        roles: {
-          columns: {},
-          with: {
-            role: {
-              columns: {
-                name: true,
-              },
-            },
-          },
-        },
-      },
-    }))
-
+  const sessionUser = await getUserSession(request)
   const locale = await i18nServer.getLocale(request)
   const { toast, headers: toastHeaders } = await getToastSession(request)
   const [csrfToken, csrfCookieHeader] = await csrf.commitToken()
 
   return data(
     {
-      user,
+      user: sessionUser,
       locale,
       toast,
       csrfToken,

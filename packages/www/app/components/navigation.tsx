@@ -31,10 +31,11 @@ import { cn, getUserImgSrc, userHasRole } from '#app/utils/misc'
 
 type NavigationProps = {
   user: Awaited<ReturnType<typeof requireUserWithRole>>
+  image?: { id: string }
   planId?: string
 }
 
-export function Navigation({ user, planId }: NavigationProps) {
+export function Navigation({ user, image, planId }: NavigationProps) {
   const navigate = useNavigate()
   const submit = useSubmit()
   const requestInfo = useRequestInfo()
@@ -64,11 +65,11 @@ export function Navigation({ user, planId }: NavigationProps) {
                 className="gap-2 px-2 data-[state=open]:bg-primary/5"
               >
                 <div className="flex items-center gap-2">
-                  {user?.image?.id ? (
+                  {image?.id ? (
                     <img
                       className="h-8 w-8 rounded-full object-cover"
                       alt={user.username ?? user.email}
-                      src={getUserImgSrc(user.image?.id)}
+                      src={getUserImgSrc(image?.id)}
                     />
                   ) : (
                     <span className="h-8 w-8 rounded-full bg-gradient-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
@@ -94,11 +95,11 @@ export function Navigation({ user, planId }: NavigationProps) {
               </DropdownMenuLabel>
               <DropdownMenuItem className="h-10 w-full cursor-pointer justify-between rounded-md bg-secondary px-2">
                 <div className="flex items-center gap-2">
-                  {user?.image?.id ? (
+                  {image?.id ? (
                     <img
                       className="h-6 w-6 rounded-full object-cover"
                       alt={user.username ?? user.email}
-                      src={getUserImgSrc(user.image?.id)}
+                      src={getUserImgSrc(image?.id)}
                     />
                   ) : (
                     <span className="h-6 w-6 rounded-full bg-gradient-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
@@ -133,11 +134,11 @@ export function Navigation({ user, planId }: NavigationProps) {
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 rounded-full">
-                {user?.image?.id ? (
+                {image?.id ? (
                   <img
                     className="min-h-8 min-w-8 rounded-full object-cover"
                     alt={user.username ?? user.email}
-                    src={getUserImgSrc(user.image?.id)}
+                    src={getUserImgSrc(image?.id)}
                   />
                 ) : (
                   <span className="min-h-8 min-w-8 rounded-full bg-gradient-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />

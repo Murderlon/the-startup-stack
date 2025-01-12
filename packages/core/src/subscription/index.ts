@@ -16,11 +16,15 @@ export namespace Subscription {
     })
   }
 
-  export const insert = async (userID: string, sub: Stripe.Subscription) => {
+  export const insert = async (
+    userID: string,
+    sub: Stripe.Subscription,
+    planId: string,
+  ) => {
     await db.insert(schema).values({
       id: sub.id,
       userId: userID,
-      planId: String(sub.items.data[0]!.plan.product),
+      planId,
       priceId: String(sub.items.data[0]!.price.id),
       interval: String(sub.items.data[0]!.plan.interval),
       status: sub.status,

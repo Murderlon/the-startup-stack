@@ -2,9 +2,8 @@ import type { MetaFunction, LoaderFunctionArgs } from 'react-router'
 import { Link, useLoaderData } from 'react-router'
 import Markdown from 'react-markdown'
 import rehypeSlug from 'rehype-slug'
-import { authenticator } from '#app/modules/auth/auth.server'
+import { getUserSession } from '#app/modules/auth/auth.server'
 import { siteConfig } from '#app/utils/constants/brand'
-import { ROUTE_PATH as LOGIN_PATH } from '#app/routes/auth+/login'
 import { buttonVariants } from '#app/components/ui/button'
 import { Logo } from '#app/components/logo'
 import { useTheme } from '#app/utils/hooks/use-theme.ts'
@@ -14,11 +13,11 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const sessionUser = await authenticator.isAuthenticated(request)
+  const user = await getUserSession(request)
   const readme = await fetch(
     'https://github.com/Murderlon/the-startup-stack/raw/refs/heads/main/readme.md',
   )
-  return { user: sessionUser, readme: await readme.text() }
+  return { user, readme: await readme.text() }
 }
 
 export default function Index() {
@@ -52,7 +51,7 @@ export default function Index() {
             </a>
           </div>
           <div className="flex items-center gap-4">
-            <Link to={LOGIN_PATH} className={buttonVariants({ size: 'sm' })}>
+            <Link to="/dashboard" className={buttonVariants({ size: 'sm' })}>
               {user ? 'Dashboard' : 'Get Started'}
             </Link>
           </div>

@@ -15,6 +15,10 @@ declare module "sst" {
       "type": "sst.aws.Router"
       "url": string
     }
+    "Auth": {
+      "type": "sst.aws.Auth"
+      "url": string
+    }
     "DATABASE_URL": {
       "type": "sst.sst.Secret"
       "value": string
@@ -39,6 +43,10 @@ declare module "sst" {
     "HONEYPOT_ENCRYPTION_SEED": {
       "type": "sst.sst.Secret"
       "value": string
+    }
+    "LambdaAuthTable": {
+      "name": string
+      "type": "sst.aws.Dynamo"
     }
     "ReactRouter": {
       "type": "sst.aws.React"

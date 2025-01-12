@@ -6,8 +6,7 @@ import { z } from 'zod'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { LucideUpload } from 'lucide-react'
-import { requireUser } from '#app/modules/auth/auth.server'
-import { getSession, destroySession } from '#app/modules/auth/auth-session.server'
+import { destroySession, getSession, requireUser } from '#app/modules/auth/auth.server'
 import { createToastHeaders } from '#app/utils/toast.server'
 import { useDoubleCheck } from '#app/utils/hooks/use-double-check'
 import { getUserImgSrc } from '#app/utils/misc'
@@ -38,7 +37,8 @@ export const UsernameSchema = z.object({
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const user = await requireUser(request)
-  return { user }
+  const image = await User.imageID(user.id)
+  return { user, image }
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -79,11 +79,10 @@ export async function action({ request }: ActionFunctionArgs) {
   // TODO: cancel Stripe subscription
   if (intent === INTENTS.USER_DELETE_ACCOUNT) {
     await db.delete(schema.user).where(eq(schema.user.id, user.id))
+    const session = await getSession(request.headers.get('Cookie'))
     return redirect(HOME_PATH, {
       headers: {
-        'Set-Cookie': await destroySession(
-          await getSession(request.headers.get('Cookie')),
-        ),
+        'Set-Cookie': await destroySession(session),
       },
     })
   }
@@ -92,7 +91,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function DashboardSettings() {
-  const { user } = useLoaderData<typeof loader>()
+  const { user, image } = useLoaderData<typeof loader>()
   const lastResult = useActionData<typeof action>()
 
   const [imageSrc, setImageSrc] = useState<string | null>(null)
@@ -139,9 +138,9 @@ export default function DashboardSettings() {
             htmlFor={avatarFields.imageFile.id}
             className="group relative flex cursor-pointer overflow-hidden rounded-full transition active:scale-95"
           >
-            {imageSrc || user.image?.id ? (
+            {imageSrc || image?.id ? (
               <img
-                src={imageSrc ?? getUserImgSrc(user.image?.id)}
+                src={imageSrc ?? getUserImgSrc(image?.id)}
                 className="h-20 w-20 rounded-full object-cover"
                 alt={user.username ?? user.email}
               />
@@ -177,7 +176,7 @@ export default function DashboardSettings() {
           <p className="text-sm font-normal text-primary/60">
             Click on the avatar to upload a custom one from your files.
           </p>
-          {user.image?.id && !avatarFields.imageFile.errors && (
+          {image?.id && !avatarFields.imageFile.errors && (
             <Button
               type="button"
               size="sm"

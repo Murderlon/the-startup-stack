@@ -2,14 +2,10 @@ name: CI
 on:
   push:
     branches: [main]
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened]
     paths-ignore:
       - "**.md"
-  pull_request:
-    types: [opened, synchronize, reopened]
-    paths:
-      - .github/workflows/ci.yml
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
