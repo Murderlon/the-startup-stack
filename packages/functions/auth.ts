@@ -6,8 +6,17 @@ import { PasswordProvider } from '@openauthjs/openauth/provider/password'
 import { PasswordUI } from '@openauthjs/openauth/ui/password'
 import { Email } from '@company/core/src/email/index'
 import { User } from '@company/core/src/user/index'
+import type { Theme } from '@openauthjs/openauth/ui/theme'
+
+const theme: Theme = {
+  title: 'My company',
+  radius: 'md',
+  primary: '#1e293b',
+  favicon: 'https://stack.merlijn.site/favicon.ico',
+}
 
 const app = issuer({
+  theme,
   storage: DynamoStorage({
     table: Resource.LambdaAuthTable.name,
   }),
