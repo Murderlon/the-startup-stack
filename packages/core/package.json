@@ -16,7 +16,7 @@
     "@aws-sdk/client-sesv2": "^3.687.0",
     "@neondatabase/serverless": "^0.9.5",
     "@openauthjs/openauth": "^0.3.2",
-    "drizzle-orm": "^0.36.2",
+    "drizzle-orm": "^0.38.4",
     "sst": "^3.3.27",
     "stripe": "^15.5.0",
     "ulid": "^2.3.0",
