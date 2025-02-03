@@ -33,7 +33,7 @@
     "i18next-browser-languagedetector": "^8.0.0",
     "intl-parse-accept-language": "^1.0.0",
     "isbot": "^5.1.17",
-    "lucide-react": "^0.460.0",
+    "lucide-react": "^0.474.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-i18next": "^15.1.1",
