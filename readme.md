@@ -6,8 +6,6 @@ Get independence from expensive SaaS without losing its developer experience,
 the infra primitives to adapt to any future requirement, and the tools to build
 delightful, secure user experiences.
 
-Check it live 👉 <https://stack.merlijn.site>
-
 ## Contents
 
 - [Features](#features)
