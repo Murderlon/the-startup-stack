@@ -45,7 +45,7 @@
     "remix-i18next": "^7.0.1",
     "remix-utils": "^7.6.0",
     "sonner": "^1.4.41",
-    "sst": "^3.9.27",
+    "sst": "^3.17.38",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.6"

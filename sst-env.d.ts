@@ -2,64 +2,10 @@
 /* tslint:disable */
 /* eslint-disable */
 /* deno-fmt-ignore-file */
+/* biome-ignore-all lint: auto-generated */
 
 declare module "sst" {
   export interface Resource {
-    "Api": {
-      "name": string
-      "type": "sst.aws.Function"
-      "url": string
-    }
-    "ApiRouter": {
-      "type": "sst.aws.Router"
-      "url": string
-    }
-    "Auth": {
-      "type": "sst.aws.Auth"
-      "url": string
-    }
-    "DATABASE_URL": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "ENCRYPTION_SECRET": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "Email": {
-      "configSet": string
-      "sender": string
-      "type": "sst.aws.Email"
-    }
-    "HONEYPOT_ENCRYPTION_SEED": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "LambdaAuthTable": {
-      "name": string
-      "type": "sst.aws.Dynamo"
-    }
-    "ReactRouter": {
-      "type": "sst.aws.React"
-      "url": string
-    }
-    "SESSION_SECRET": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "STRIPE_PUBLIC_KEY": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "STRIPE_SECRET_KEY": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "StripeWebhook": {
-      "id": string
-      "secret": string
-      "type": "stripe.index/webhookEndpoint.WebhookEndpoint"
-    }
   }
 }
 /// <reference path="sst-env.d.ts" />

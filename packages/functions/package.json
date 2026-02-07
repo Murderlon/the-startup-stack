@@ -12,7 +12,7 @@
   "dependencies": {
     "@openauthjs/openauth": "^0.3.2",
     "hono": "^4.6.3",
-    "sst": "^3.9.27"
+    "sst": "^3.17.38"
   },
   "devDependencies": {
     "typescript": "^5.7.2"

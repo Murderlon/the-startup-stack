@@ -1,5 +1,4 @@
 /// <reference path="./.sst/platform/config.d.ts" />
-import { readdirSync } from 'node:fs'
 export default $config({
   app(input) {
     return {
@@ -16,6 +15,7 @@ export default $config({
     }
   },
   async run() {
+    const { readdirSync } = await import('node:fs')
     const outputs = {}
     for (const value of readdirSync('./infra/')) {
       const result = await import(`./infra/${value}`)
